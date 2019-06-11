@@ -47,7 +47,7 @@ void loop() {
   }
   if (i > 71) {
     checksum();
-    parsen();
+   
     i = 0;
   }
 }
@@ -62,6 +62,7 @@ void checksum() {
 
   if (CK_A == ackPacket[70] && CK_B == ackPacket[71]) {
     // Serial.println("ACK Received! ");
+     parsen();
   }
   else {
     // Serial.println("ACK Checksum Failure: ");
