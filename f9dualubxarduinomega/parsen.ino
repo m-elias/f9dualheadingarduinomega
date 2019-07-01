@@ -1,4 +1,7 @@
 void parsen() {
+  bool gnssFixOK;
+  bool carrSoln;
+
   heading  =  (long)ackPacket[24 + 6] ;
   heading += (long)ackPacket[25 + 6] << 8;
   heading += (long)ackPacket[26 + 6] << 16 ;
@@ -33,9 +36,19 @@ void parsen() {
   relPosDH = relPosDH / 100000;
   relPosD = relPosD + relPosDH;
 
-  //Serial.print("relPosD : ");
-  //Serial.println(relPosD);
+  gnssFixOK = (byte)ackPacket[60 + 6]   & (1 << 0); ;
+  carrSoln = (byte)ackPacket[60 + 6]  & (1 << 3); ;
+  /*
+    Serial.print("BIN : ");
+    Serial.println(ackPacket[60 + 6],BIN);
+    Serial.print("gnssFixOK : ");
+    Serial.println(gnssFixOK);
+    Serial.print("carrSoln : ");
+    Serial.println(carrSoln);
 
+    Serial.print("relPosD : ");
+    Serial.println(relPosD);
+  */
   if (millis() - lastTime > 1000)
   {
     lastTime = millis(); //Update the timer
@@ -56,7 +69,11 @@ void parsen() {
   if (XOR < 16) Serial.print("0"); // add leading 0 if needed
   Serial.println(XOR, HEX);
 
-  roll = (atan2(relPosD, baseline)) * 180 / 3.141592653589793238;
+  if (carrSoln == 2) {
+    roll = (atan2(relPosD, baseline)) * 180 / 3.141592653589793238;
+  }
+  else roll = 0;
+
   //Serial.print("Roll :");
   //Serial.println(roll);
   //$PTNL,AVR,181059.6,+149.4688,Yaw,+0.0134,Tilt,,,60.191,3,2.5,6*00
